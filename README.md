@@ -2,6 +2,10 @@
 <h3 align="center">World-Action Modeling via Action-Conditioned Geometric Latent Prediction</h3>
 
 <p align="center">
+  <a href="README.md">English</a> | <a href="README.zh-CN.md">简体中文</a>
+</p>
+
+<p align="center">
   Jiangtao Liu<sup>1,2,*</sup>, Zishang Xiang<sup>1,*</sup>, Yage He<sup>2</sup>, Lingguo Cui<sup>1</sup>,<br>
   Baihai Zhang<sup>1</sup>, Runqi Chai<sup>1</sup>, and Senchun Chai<sup>1,†</sup><br>
   <sup>1</sup>School of Automation, Beijing Institute of Technology &nbsp; <sup>2</sup>LimX Dynamics<br>
@@ -20,7 +24,7 @@
   <img src="assets/readme/overview.webp" width="100%" alt="ACG-WAM overview: geometric supervision during training, the deployed policy, and benchmark results">
 </p>
 
-**ACG-WAM** teaches a world-action model to predict the geometric consequences of actions. Built on [Motus](https://github.com/thu-ml/Motus), it learns from current observations, demonstrated actions, and geometric targets at multiple horizons, while keeping the backbone's inference path unchanged.
+We introduce **ACG-WAM**, a world-action model built on [Motus](https://github.com/thu-ml/Motus) with action-conditioned geometric prediction during training and an unchanged backbone inference path.
 
 <p align="center">
   <a href="#highlights">Highlights</a> ·
@@ -36,16 +40,16 @@
 
 ## Highlights
 
-- **Action-conditioned geometric prediction.** ACG-JEPA predicts future geometric features from the current observation and the intervening actions, with supervision at horizons **1, 2, 4, and 8**.
-- **Geometry from three views.** A frozen VGGT teacher supplies targets from the head and wrist cameras. Supervision updates the policy's shared visual embedding **before temporal mixing**.
-- **Strong simulation and real robot results.** ACG-WAM reaches **93.07%** mean success across clean and randomized RoboTwin 2.0 settings, and **85.00%** mean success on three real robot tasks.
-- **Training-time supervision.** Teacher targets are cached offline. The teacher, cache, adapter, and predictor are removed at deployment, adding **no auxiliary modules to inference**.
+- **Action-conditioned geometry.** ACG-JEPA predicts future features from observations and actions at horizons **1, 2, 4, and 8**.
+- **Three-view supervision.** A frozen VGGT teacher uses head and wrist camera views to supervise shared visual features **before temporal mixing**.
+- **Performance.** **93.07%** mean success across clean and randomized RoboTwin 2.0 settings; **85.00%** on three real robot tasks.
+- **Training-only supervision.** Teacher targets are cached offline; no teacher, cache, adapter, or predictor is needed at deployment.
 
 ## Demonstrations
 
 ### Real Robot
 
-Successful executions on **TRON2 with grippers**. The previews below play at **2× speed**; click a preview for the full video at its original playback speed. Left and right refer to the robot's arms.
+Successful executions on **TRON2 with grippers**. Previews play at **2× speed** and link to original-speed videos.
 
 <table>
   <tr>
@@ -67,13 +71,13 @@ Successful executions on **TRON2 with grippers**. The previews below play at **2
 
 ### RoboTwin 2.0
 
-[▶ Browse simulation videos](https://RoboOpus.github.io/ACG-WAM/#simulation) across six tasks, with clean and randomized scenes and multiple demonstrations.
+[▶ Simulation videos](https://RoboOpus.github.io/ACG-WAM/#simulation) across six tasks in clean and randomized scenes.
 
 ## Performance
 
 ### RoboTwin 2.0 — 50 Tasks
 
-Success rates (%) from [Table I of the paper](https://RoboOpus.github.io/ACG-WAM/assets/paper/acg-wam.pdf#page=5). ACG-WAM is evaluated over **100 episodes per task per setting**, using unseen instruction templates and seed 42. Each setting is averaged over all 50 tasks; Mean gives equal weight to Clean and Randomized. Baseline results are taken from the publications identified in the paper.
+Success rates (%) from [Table I](https://RoboOpus.github.io/ACG-WAM/assets/paper/acg-wam.pdf#page=5), with **100 episodes per task per setting**. Mean equally weights Clean and Randomized. Baseline sources are cited in the paper.
 
 | Method | Clean | Randomized | Mean |
 | :--- | ---: | ---: | ---: |
@@ -86,11 +90,9 @@ Success rates (%) from [Table I of the paper](https://RoboOpus.github.io/ACG-WAM
 | WAM4D | **93.82** | 89.86 | 91.84 |
 | **ACG-WAM (ours)** | 93.46 | **92.68** | **93.07** |
 
-ACG-WAM improves on Motus by **4.80 percentage points** in clean scenes and **5.66 points** under randomization, with the best randomized and mean success among these methods.
-
 ### Real Robot — Three Tasks
 
-Results from [Table II of the paper](https://RoboOpus.github.io/ACG-WAM/assets/paper/acg-wam.pdf#page=7) on TRON2 with grippers. Each policy is fine-tuned for **15k updates** using **100 demonstrations per task**, then evaluated over **20 trials per task**. SR is full task success; PCS is partial completion score, normalized from scores of 0, 1, or 2.
+TRON2 results from [Table II](https://RoboOpus.github.io/ACG-WAM/assets/paper/acg-wam.pdf#page=7): **15k** fine-tuning updates, **100 demonstrations** and **20 evaluation trials per task**. SR is full task success; PCS is normalized partial completion.
 
 | Method | Fruit Placement SR | Block Stacking SR | Toy into Cup SR | Average SR | Average PCS |
 | :--- | ---: | ---: | ---: | ---: | ---: |
@@ -99,12 +101,12 @@ Results from [Table II of the paper](https://RoboOpus.github.io/ACG-WAM/assets/p
 | Motus | 70.00 | 70.00 | 85.00 | 75.00 | 82.50 |
 | **ACG-WAM (ours)** | **85.00** | **75.00** | **95.00** | **85.00** | **91.67** |
 
-The task averages exceed Motus by **10.00 points in SR** and **9.17 points in PCS**. These experiments use task-specific real robot fine-tuning; the publicly released checkpoint below is the **RoboTwin 40k policy**.
+These results use task-specific fine-tuning; the public checkpoint is the **RoboTwin 40k policy**.
 
 <details>
 <summary><b>Ablations: geometric targets, action conditioning, and prediction horizons</b></summary>
 
-All variants reported in the paper train for **8k updates on the same six tasks**, with 100 evaluation episodes per task per setting. These results are separate from the 50-task benchmark above; see Tables III–IV in the paper. See [Ablation Configurations](#ablation-configurations) for the released recipes and the provenance of the No-Action configuration.
+Six-task ablations: **8k updates**, 100 evaluation episodes per task per setting (Tables III–IV). Recipes: [Ablation Configurations](#ablation-configurations).
 
 | Variant | Clean | Randomized | Mean |
 | :--- | ---: | ---: | ---: |
@@ -120,7 +122,7 @@ All variants reported in the paper train for **8k updates on the same six tasks*
 
 ## Installation
 
-Use Linux, Python 3.10, and a CUDA-capable NVIDIA GPU. The commands below follow the Motus reference stack with PyTorch 2.7.1 and CUDA 12.8. FlashAttention requires a compatible CUDA toolkit and compiler. Training examples use four GPUs with ZeRO-1; an unchanged single-GPU launch is not a substitute for this memory-intensive configuration.
+Requirements: Linux, Python 3.10, PyTorch 2.7.1, CUDA 12.8, and a compatible compiler for FlashAttention. Training examples use four NVIDIA GPUs with ZeRO-1.
 
 ```bash
 git clone https://github.com/RoboOpus/ACG-WAM.git
@@ -135,7 +137,7 @@ python -m pip install flash-attn --no-build-isolation
 python -m pip install -r requirements.txt huggingface_hub
 ```
 
-[`requirements.txt`](requirements.txt) pins the Transformers version and installs VGGT from a specific source revision. VGGT is used by offline cache generation and auditing. Run the remaining commands from the repository root unless a different directory is specified.
+Dependencies: [`requirements.txt`](requirements.txt). Run the following commands from the repository root.
 
 ## Model Downloads
 
@@ -145,127 +147,49 @@ python -m pip install -r requirements.txt huggingface_hub
 | :--- | :---: | :--- |
 | **ACG-WAM-RoboTwin-40K** | [🤗 Hugging Face](https://huggingface.co/RoboOpus/ACG-WAM) | Joint ACG-JEPA · clean + randomized · 40k updates |
 
-Download the Joint JEPA checkpoint trained for 40,000 optimizer updates:
-
 ```bash
 hf download RoboOpus/ACG-WAM --local-dir ./pretrained_models/ACG-WAM
 ```
 
-The model repository provides:
-
-```text
-pretrained_models/ACG-WAM/
-  config.json
-  mp_rank_00_model_states.pt
-  LICENSE
-```
-
-The weight file is approximately **16.09 GB**. Pass the **containing directory**, not the individual weight file, to the checkpoint loader. This download contains model parameters and configuration, **not the optimizer and scheduler state needed for exact training resume**. It does not include demonstrations or teacher-cache data.
+The **16.09 GB** download contains model weights and configuration only. Load the **containing directory**, not an individual weight file. Exact resume requires a full training-state checkpoint.
 
 ### Foundation Models
 
-The WAN VAE/text encoder, architecture configurations, and Qwen processor/tokenizer assets are still needed by the supplied workflows:
+WAN and Qwen assets are required for training and evaluation:
 
 ```bash
 hf download Wan-AI/Wan2.2-TI2V-5B --local-dir ./pretrained_models/Wan2.2-TI2V-5B
 hf download Qwen/Qwen3-VL-2B-Instruct --local-dir ./pretrained_models/Qwen3-VL-2B-Instruct
 ```
 
-For training the released recipe from Motus initialization and generating its teacher cache, also download:
+For training from Motus and generating teacher targets:
 
 ```bash
 hf download motus-robotics/Motus --local-dir ./pretrained_models/Motus
 hf download facebook/VGGT-1B --local-dir ./pretrained_models/VGGT-1B
 ```
 
-The Motus initialization and VGGT teacher are not needed when only evaluating the released ACG-WAM policy. Observe the licenses of each upstream model and dataset.
-
 ## Data Preparation
 
-Training expects converted RoboTwin demonstrations with matching episode identifiers:
+Store converted RoboTwin data under `<dataset>/{clean,randomized}/<task>/`, with matching episode IDs:
 
-```text
-robotwin_dataset/
-  clean/
-    task_name/
-      qpos/
-        0.pt
-      videos/
-        0.mp4
-      umt5_wan/
-        0.pt
-  randomized/
-    task_name/
-      qpos/
-        0.pt
-      videos/
-        0.mp4
-      umt5_wan/
-        0.pt
-```
+- `qpos/*.pt`: 14-dimensional action/state tensors.
+- `videos/*.mp4`: three-camera T-layout videos, with the main view in the top two-thirds and wrist views below.
+- `umt5_wan/*.pt`: precomputed language embeddings.
 
-- `qpos` contains action/state tensors; this recipe uses 14-dimensional actions and states.
-- `videos` contains the three-camera T-layout videos: the main camera occupies the top two-thirds, with left and right wrist cameras below it.
-- `umt5_wan` contains precomputed language embeddings for the corresponding episodes.
-- The main configuration uses `data_mode: both`, multiple tasks, and no episode-count limit. Keep video frames and robot trajectories aligned throughout conversion.
-
-The conversion entry points are in [`data/robotwin2/robotwin_data_convert`](data/robotwin2/robotwin_data_convert); see also the [upstream conversion guide](https://github.com/thu-ml/Motus/tree/main/data/robotwin2/robotwin_data_convert). Dataset acquisition and conversion are separate from downloading the policy checkpoint. Generate the Joint cache from the same converted videos that will be used for training.
+Use [`data/robotwin2/robotwin_data_convert`](data/robotwin2/robotwin_data_convert) and the [upstream guide](https://github.com/thu-ml/Motus/tree/main/data/robotwin2/robotwin_data_convert). Keep video/action alignment and generate the Joint cache from the same training videos.
 
 ## Training Configuration
 
-The released recipe uses **Joint ACG-JEPA**, initialized from Motus and trained on clean and randomized RoboTwin demonstrations for 40,000 updates.
+Main recipe: [`configs/robotwin_joint_full_from_motus_40k.yaml`](configs/robotwin_joint_full_from_motus_40k.yaml), with [`configs/zero1.json`](configs/zero1.json). It uses **Joint ACG-JEPA**, initialized from Motus with `load_full_checkpoint: false`.
 
-<details>
-<summary><b>Recipe settings and teacher protocol</b></summary>
-
-| Setting | Value |
-| --- | --- |
-| Main experiment | [`configs/robotwin_joint_full_from_motus_40k.yaml`](configs/robotwin_joint_full_from_motus_40k.yaml) |
-| Distributed training | [`configs/zero1.json`](configs/zero1.json), DeepSpeed ZeRO-1 |
-| Teacher target | `joint_future_slot` |
-| Geometry loss weight | `0.01` |
-| Prediction horizons | `1, 2, 4, 8` |
-| Teacher target shape | `96 x 768` |
-| Backbone receives geometry gradients | Yes (`freeze_wam_for_geo: false`) |
-
-The experiment YAML and the DeepSpeed JSON serve different purposes; **both files are required**. Local dataset, checkpoint, and cache paths must be adapted to your machine.
-
-</details>
-
-Edit [`configs/robotwin_joint_full_from_motus_40k.yaml`](configs/robotwin_joint_full_from_motus_40k.yaml) to replace the original machine-specific paths. Update the corresponding fields as shown below; this is a **partial example**, not a replacement for the full configuration:
-
-```yaml
-dataset:
-  dataset_dir: /absolute/path/to/robotwin_dataset
-model:
-  wan:
-    config_path: ./pretrained_models/Wan2.2-TI2V-5B
-    checkpoint_path: ./pretrained_models/Wan2.2-TI2V-5B
-    vae_path: ./pretrained_models/Wan2.2-TI2V-5B/Wan2.2_VAE.pth
-  vlm:
-    checkpoint_path: ./pretrained_models/Qwen3-VL-2B-Instruct
-finetune:
-  checkpoint_path: ./pretrained_models/Motus
-  load_full_checkpoint: false
-resume:
-  checkpoint_path: null
-geometry_jepa:
-  cache_dir: ./cache/vggt_teacher_robotwin_joint_future_slot_v1
-```
-
-Keep `geometry_jepa.enable: true`, `target_mode: joint_future_slot`, and the matching teacher protocol:
-
-```text
-vggt_tlayout_3view_percam_q32_d768_centered_joint_future_slot_v1
-```
-
-The pretrained Motus initialization uses `load_full_checkpoint: false`. To start a **new fine-tuning run from the released ACG-WAM weights**, instead set `finetune.checkpoint_path` to `./pretrained_models/ACG-WAM` and `finetune.load_full_checkpoint: true`, with `resume.checkpoint_path: null`. This is a new run, not an exact continuation of the original optimizer state.
+Update the dataset, foundation-model, Motus initialization, and teacher-cache paths in the YAML before running.
 
 ## Joint Teacher Cache
 
 ### Generate the Cache
 
-Complete dataset preparation and update the YAML paths before running:
+Generate the cache after data preparation and path configuration:
 
 ```bash
 CUDA_VISIBLE_DEVICES=0 python tools/precompute_vggt_cache.py \
@@ -275,32 +199,6 @@ CUDA_VISIBLE_DEVICES=0 python tools/precompute_vggt_cache.py \
     --target-mode joint_future_slot \
     --batch-size 8
 ```
-
-This entry point automatically selects Joint generation from the YAML; `--target-mode` makes that choice explicit. It encodes same-camera current/future pairs and stores targets by window and horizon. With the released configuration, each window has a static slot plus horizons `1, 2, 4, 8`, each containing `96 x 768` features. Single-shard generation finalizes the index and manifest automatically.
-
-<details>
-<summary><b>Generate the cache across multiple GPUs</b></summary>
-
-For multiple GPUs, run one worker per GPU with the same configuration, cache directory, and `--num-shards N`, and a distinct `--shard-id` from `0` to `N-1`. For example, the following is **worker 0 of 4**; start workers 1, 2, and 3 separately with their matching GPU IDs:
-
-```bash
-CUDA_VISIBLE_DEVICES=0 python tools/precompute_vggt_cache.py \
-    --config configs/robotwin_joint_full_from_motus_40k.yaml \
-    --cache-dir ./cache/vggt_teacher_robotwin_joint_future_slot_v1 \
-    --vggt-checkpoint ./pretrained_models/VGGT-1B \
-    --target-mode joint_future_slot \
-    --num-shards 4 --shard-id 0
-```
-
-Only after **all workers finish successfully**, merge their indices:
-
-```bash
-python tools/precompute_vggt_cache.py \
-    --cache-dir ./cache/vggt_teacher_robotwin_joint_future_slot_v1 \
-    --merge-index
-```
-
-</details>
 
 ### Audit Before Training
 
@@ -312,13 +210,11 @@ CUDA_VISIBLE_DEVICES=0 python tools/audit_joint_vggt_cache.py \
     --num-windows 32
 ```
 
-The audit compares cached targets with fresh teacher outputs and probes the temporal-pair construction. Training reads the completed cache; it does not run VGGT. Keep the source videos available for the audit.
-
-**Do not substitute an endpoint-residual cache for a Joint cache.** Changes to the teacher weights, preprocessing, camera order, target construction, feature dimensions, or cached horizons require a compatible protocol and regenerated cache. Do not relabel an existing cache to bypass a mismatch. A cache generated with `--limit-episodes` is only suitable for a matching restricted dataset, not full-data training.
+  Keep source videos for auditing. **Use a Joint cache matching the training data and teacher protocol**, and regenerate it after changes; an endpoint-residual cache is incompatible.
 
 ## Training
 
-Launch the main recipe explicitly, after the cache has been generated and audited:
+  After the cache passes the audit:
 
 ```bash
 torchrun --standalone --nproc_per_node=4 train/train.py \
@@ -327,8 +223,6 @@ torchrun --standalone --nproc_per_node=4 train/train.py \
     --run_name joint_full_seed42 \
     --report_to tensorboard
 ```
-
-The Python training entry point and shell launchers default to this published main configuration. SLURM scripts also require your cluster paths, environment, and resource settings.
 
 | Training setting | Value |
 | --- | --- |
@@ -342,25 +236,11 @@ The Python training entry point and shell launchers default to this published ma
 | Seed | 42 |
 | Save interval | 20,000 updates |
 
-Step counts refer to **optimizer updates**, not individual micro-batches. Changing GPU count, micro-batch size, or gradient accumulation changes the effective batch size unless compensated.
-
-With the default output settings, checkpoints and TensorBoard logs are placed under:
-
-```text
-checkpoints/robotwin_joint_full_from_motus_40k/joint_full_seed42/
-```
-
-```bash
-tensorboard --logdir checkpoints/robotwin_joint_full_from_motus_40k/joint_full_seed42/tensorboard_logs
-```
-
-Full training checkpoints include optimizer state and are substantially larger than the downloadable model. Before a smoke run, lower `training.max_steps`, restrict the dataset consistently with its cache, and use a separate `system.checkpoint_dir`. Do not start a full 40k run just to test installation.
-
-For an **exact resume**, set `resume.checkpoint_path` to a complete local trainer checkpoint and set `finetune.checkpoint_path: null`. Preserve the compatible model and JEPA configuration. The model-only Hugging Face download is not an exact-resume checkpoint.
+Outputs: `checkpoints/robotwin_joint_full_from_motus_40k/joint_full_seed42/`.
 
 ## Ablation Configurations
 
-The six-task recipes use `handover_mic`, `hanging_mug`, `move_can_pot`, `place_mouse_pad`, `put_object_cabinet`, and `scan_object`. The historical `_10task` filenames are preserved; their `dataset.task_names` lists select **six tasks**.
+Task lists follow `dataset.task_names`; historical `_10task` filenames refer to the six-task variants.
 
 | Recipe | Configuration | Target | Horizons | Actions in JEPA | Updates / tasks |
 | --- | --- | --- | --- | --- | --- |
@@ -371,44 +251,11 @@ The six-task recipes use `handover_mic`, `hanging_mug`, `move_can_pot`, `place_m
 | No-Action, original recipe | [`robotwin_no_action.yaml`](configs/robotwin_no_action.yaml) | Residual | 1, 2, 4, 8 | Zero | 40k / all |
 | No-Action, aligned Joint recipe | [`robotwin_joint_no_action_6task_8k.yaml`](configs/robotwin_joint_no_action_6task_8k.yaml) | Joint | 1, 2, 4, 8 | Zero | 8k / six |
 
-**No-Action provenance:** `robotwin_no_action.yaml` preserves the supplied experiment settings, with portable paths. It uses residual targets, all tasks, and 40k updates, so it does not directly reproduce the paper's six-task, 8k Joint No-Action row. The aligned Joint file is derived from the six-task Joint baseline by changing only `geometry_jepa.action_condition_source` to `zero`; it has not been verified as the exact configuration of that reported run.
-
-All recipes in this table initialize from the experiment's full `./pretrained_models/Motus_robotwin2` checkpoint with `finetune.load_full_checkpoint: true`. Supply that initialization checkpoint and update dataset/model/cache paths before running. This initialization differs from the main 40k recipe's partial loading of pretrained Motus. The downloadable ACG-WAM model is the trained 40k policy, not this ablation initialization checkpoint.
-
-`geometry_jepa.action_condition_source` defaults to `full`. Setting it to `zero` zeros the aligned action prefix passed to the auxiliary geometric predictor; the backbone's action targets and losses remain unchanged. Full and zero modes can initialize new fine-tuning runs from compatible model weights. Exact resume checks require matching action conditioning; older checkpoint metadata without this field is treated as `full` with a warning.
-
-The Joint baseline, Short, Long, and aligned No-Action recipes can share a completed Joint cache containing horizons `1, 2, 4, 8`, provided it covers their dataset episodes. The loader selects the requested horizon slots. Generate and audit that cache using the Joint baseline configuration and the commands in [Joint Teacher Cache](#joint-teacher-cache).
-
-Residual recipes need a separate **single-frame** cache with protocol `vggt_tlayout_3view_percam_q32_d768_centered_v3`. For the six-task residual recipe:
-
-```bash
-CUDA_VISIBLE_DEVICES=0 python tools/precompute_vggt_cache.py \
-    --config configs/robotwin_residual_10task_8k.yaml \
-    --cache-dir ./cache/vggt_teacher_robotwin \
-    --vggt-checkpoint ./pretrained_models/VGGT-1B \
-    --target-mode single_frame \
-    --batch-size 8
-```
-
-For the original all-task No-Action recipe, use `configs/robotwin_no_action.yaml` during cache generation to cover all its episodes. Keep caches generated for different dataset scopes in separate directories, and set each YAML's `geometry_jepa.cache_dir` accordingly.
-
-Launch an ablation by selecting its YAML, for example:
-
-```bash
-torchrun --standalone --nproc_per_node=4 train/train.py \
-    --deepspeed configs/zero1.json \
-    --config configs/robotwin_joint_no_action_6task_8k.yaml \
-    --run_name joint_no_action_6task_8k_seed42 \
-    --report_to tensorboard
-```
-
 ## RoboTwin Evaluation
 
-Evaluation uses a separate RoboTwin simulator installation. Follow the [RoboTwin setup instructions](https://github.com/RoboTwin-Platform/RoboTwin), then make its environment able to import the dependencies required by this policy.
+Install [RoboTwin](https://github.com/RoboTwin-Platform/RoboTwin) and the policy dependencies. Deployment code is in [`inference/robotwin/Motus`](inference/robotwin/Motus), retaining **`Motus`** as its internal name for compatibility.
 
-The deployment snapshot lives in [`inference/robotwin/Motus`](inference/robotwin/Motus). Its internal policy name remains **`Motus`** for compatibility with the evaluator; loading the ACG-WAM checkpoint selects the released policy weights.
-
-Set `ROBOTWIN_ROOT` to your simulator checkout and copy the policy into an unused destination:
+Copy the policy into an unused destination:
 
 ```bash
 export ROBOTWIN_ROOT=/absolute/path/to/RoboTwin
@@ -417,7 +264,7 @@ test ! -e "$ROBOTWIN_ROOT/policy/Motus" &&
 cp -a inference/robotwin/Motus "$ROBOTWIN_ROOT/policy/Motus"
 ```
 
-If `policy/Motus` already exists, inspect and back it up or merge it deliberately instead of overwriting it blindly. In the **copied** policy's [`paths_config.yml`](inference/robotwin/Motus/paths_config.yml), replace the path placeholders:
+If `policy/Motus` exists, back it up or merge first. Update the **copied** [`paths_config.yml`](inference/robotwin/Motus/paths_config.yml):
 
 ```yaml
 robotwin_root: /absolute/path/to/RoboTwin
@@ -429,50 +276,11 @@ task_config: demo_randomized
 seed: 42
 ```
 
-`checkpoint_path` must point directly to the directory containing `mp_rank_00_model_states.pt`. Edit `TASK_NAME` and `GPU_ID` near the top of the copied [`eval.sh`](inference/robotwin/Motus/eval.sh), then run:
+Point `checkpoint_path` to the directory containing `mp_rank_00_model_states.pt`, set `TASK_NAME` and `GPU_ID` in the copied [`eval.sh`](inference/robotwin/Motus/eval.sh), then run:
 
 ```bash
 bash "$ROBOTWIN_ROOT/policy/Motus/eval.sh"
 ```
-
-The policy loader uses `strict=False` with its JEPA-free deployment model. Auxiliary JEPA parameters in the training checkpoint are not needed at deployment; neither VGGT nor the teacher cache is used for action inference. The WAN VAE/text encoder and Qwen processor assets are still required.
-
-The public deployment code covers RoboTwin. Real robot results and demonstration videos are presented above.
-
-## Troubleshooting
-
-<details>
-<summary><b>Common setup issues</b></summary>
-
-| Symptom | Check |
-| --- | --- |
-| Missing experiment or DeepSpeed config | Pass a published experiment YAML with `--config` and `configs/zero1.json` with `--deepspeed`. |
-| Cache manifest, protocol, or horizon mismatch | Check the Joint protocol, dataset coverage, and completed shard merge. Do not disable cache validation. |
-| Out of GPU memory during cache generation | Reduce the cache generator's `--batch-size`; teacher encoding and policy training have different memory requirements. |
-| Out of GPU memory during training | Check GPU count and ZeRO-1 setup. Reduce per-GPU micro-batch size and compensate with gradient accumulation if preserving global batch 256. |
-| Checkpoint file not found | Pass the containing directory; the published weight file is `mp_rank_00_model_states.pt`. |
-| Missing pretrained assets at inference | Check the full WAN directory, including the VAE and T5 assets, and the Qwen processor/tokenizer directory. |
-| Exact resume fails with downloaded weights | Use a complete local training-state checkpoint for resume, or initialize a new run using full-checkpoint fine-tuning. |
-
-</details>
-
-## Code Map
-
-<details>
-<summary><b>Repository entry points</b></summary>
-
-| Component | Entry point |
-| --- | --- |
-| Training | [`train/train.py`](train/train.py) |
-| Motus backbone and student attachment | [`models/motus.py`](models/motus.py) |
-| Geometric adapter, action encoder, and predictor | [`models/geometry_jepa.py`](models/geometry_jepa.py) |
-| Offline teacher-cache generation | [`tools/precompute_vggt_cache.py`](tools/precompute_vggt_cache.py) |
-| VGGT protocol and joint target construction | [`data/utils/vggt_teacher.py`](data/utils/vggt_teacher.py) |
-| Read-only cache loading | [`data/utils/teacher_store.py`](data/utils/teacher_store.py) |
-| Joint-cache audit | [`tools/audit_joint_vggt_cache.py`](tools/audit_joint_vggt_cache.py) |
-| RoboTwin deployment | [`inference/robotwin/Motus`](inference/robotwin/Motus) |
-
-</details>
 
 ## Citation
 
@@ -488,6 +296,6 @@ The public deployment code covers RoboTwin. Real robot results and demonstration
 
 ## Acknowledgments and License
 
-ACG-WAM builds on [Motus](https://github.com/thu-ml/Motus), [WAN](https://github.com/Wan-Video/Wan2.2), [Qwen3-VL](https://github.com/QwenLM/Qwen3-VL), [VGGT](https://github.com/facebookresearch/vggt), and [RoboTwin](https://github.com/RoboTwin-Platform/RoboTwin). Please also acknowledge the upstream projects when using their code, models, or datasets.
+We thank the authors of [Motus](https://github.com/thu-ml/Motus), [WAN](https://github.com/Wan-Video/Wan2.2), [Qwen3-VL](https://github.com/QwenLM/Qwen3-VL), [VGGT](https://github.com/facebookresearch/vggt), and [RoboTwin](https://github.com/RoboTwin-Platform/RoboTwin) for making their work publicly available.
 
-Repository code is distributed under the [Apache-2.0 license](LICENSE). Upstream weights and datasets remain subject to their respective terms.
+We release our repository code under the [Apache-2.0 license](LICENSE). Upstream weights and datasets remain subject to their respective terms.
